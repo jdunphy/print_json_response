@@ -1,0 +1,38 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'net/http'
+require 'json'
+
+DEFAULT_HOST = 'http://127.0.0.1:7000'
+
+def read_from_stdin
+  while url = gets
+    process_url url
+  end
+end
+
+def read_from_args
+  ARGV.each { |url| process_url url }
+end
+
+def process_url(url)
+  if url !~ /\Ahttp/
+    p = url.split('/').compact
+    p.unshift(DEFAULT_HOST)
+    url = p.join('/')
+  end
+
+  puts "Retrieving #{url}:"
+
+  resp = Net::HTTP.get_response(URI.parse(url))
+  raw = resp.body
+  data = JSON.parse(raw)
+  puts JSON.pretty_unparse(data)
+end
+
+if ARGV.empty?
+  read_from_stdin
+else
+  read_from_args
+end
