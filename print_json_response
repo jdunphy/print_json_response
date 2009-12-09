@@ -4,7 +4,8 @@ require 'rubygems'
 require 'net/http'
 require 'json'
 
-DEFAULT_HOST = 'http://127.0.0.1:7000'
+DEFAULT_HOST = 'http://127.0.0.1:3000'
+CONFIG_PATH = File.expand_path('~/.pjr')
 
 def read_from_stdin
   puts "Interactive mode.  Enter a uri:"
@@ -17,10 +18,19 @@ def read_from_args
   ARGV.each { |url| process_url url }
 end
 
+def default_host
+  if File.exist?(CONFIG_PATH) &&
+      File.read(CONFIG_PATH) =~ /default_host:(.+)/i
+    $1.strip
+  else
+    DEFAULT_HOST
+  end
+end
+
 def process_url(url)
   if url !~ /\Ahttp/
     url = '/' + url unless url.start_with?('/')
-    url = DEFAULT_HOST + url
+    url = default_host + url
   end
 
   puts "Retrieving #{url}:"
