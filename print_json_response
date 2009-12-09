@@ -19,9 +19,8 @@ end
 
 def process_url(url)
   if url !~ /\Ahttp/
-    p = url.split('/').compact
-    p.unshift(DEFAULT_HOST)
-    url = p.join('/')
+    url = '/' + url unless url.start_with?('/')
+    url = DEFAULT_HOST + url
   end
 
   puts "Retrieving #{url}:"
