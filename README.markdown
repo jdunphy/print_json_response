@@ -12,14 +12,6 @@ usage
           "what":"oh hey look some pretty-printed json"
         }
 
-        $ pjr
-        Interactive mode.  Enter a uri.
-        http://someplace.com/someurl.json
-        Retrieving http://someplace.com/someurl.json:
-        {
-           "what":"oh hey look some pretty-printed json"
-        }
-
 installation
 ------------
 I just stick this file in some place that happens to be in my load path.

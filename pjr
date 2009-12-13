@@ -7,17 +7,6 @@ require 'json'
 DEFAULT_HOST = 'http://127.0.0.1:3000'
 CONFIG_PATH = File.expand_path('~/.pjr')
 
-def read_from_stdin
-  puts "Interactive mode.  Enter a uri:"
-  while url = gets
-    process_url url.chomp
-  end
-end
-
-def read_from_args
-  ARGV.each { |url| process_url url }
-end
-
 def default_host
   if File.exist?(CONFIG_PATH) &&
       File.read(CONFIG_PATH) =~ /default_host:(.+)/i
@@ -41,8 +30,4 @@ def process_url(url)
   puts JSON.pretty_unparse(data)
 end
 
-if ARGV.empty?
-  read_from_stdin
-else
-  read_from_args
-end
+ARGV.each { |url| process_url url }
