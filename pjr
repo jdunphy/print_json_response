@@ -40,11 +40,8 @@ end
 options = {}
 OptionParser.new do |opts|
   opts.banner = "Usage: pjr [options] <uri>"
-
-  opts.separator ""
   opts.separator "Specific options:"
 
-  # Mandatory argument.
   opts.on("-i", "Dump the results into @response in IRB") do
     options['irb'] = true
   end
