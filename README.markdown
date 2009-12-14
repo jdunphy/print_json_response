@@ -25,6 +25,15 @@ usage
         $ cat /Users/jdunphy/.pjr 
         default_host:http://localhost:7000
 
+pjr can jump into irb, instead of printing json
+
+        $ pjr -i someurl.json
+        Retrieving http://127.0.0.1:3000/someurl.json:
+        Loading IRB.
+        JSON response is in @response
+        irb(main):001:0> @response['what']
+        => "oh hey look some pretty-printed json"
+
 installation
 ------------
 I just stick this file in some place that happens to be in my load path.

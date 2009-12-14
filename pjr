@@ -16,7 +16,7 @@ def default_host
   end
 end
 
-def process_url(url)
+def process_url(url, options)
   if url !~ /\Ahttp/
     url = '/' + url unless url.start_with?('/')
     url = default_host + url
@@ -25,9 +25,34 @@ def process_url(url)
   puts "Retrieving #{url}:"
 
   resp = Net::HTTP.get_response(URI.parse(url))
-  raw = resp.body
-  data = JSON.parse(raw)
-  puts JSON.pretty_unparse(data)
+  data = JSON.parse(resp.body)
+  if options['irb']
+    require 'irb'
+    @response = data
+    puts "Loading IRB."
+    puts "JSON response is in @response"
+    IRB.start
+  else
+    puts JSON.pretty_unparse(data)    
+  end
 end
 
-ARGV.each { |url| process_url url }
+options = {}
+OptionParser.new do |opts|
+  opts.banner = "Usage: pjr [options] <uri>"
+
+  opts.separator ""
+  opts.separator "Specific options:"
+
+  # Mandatory argument.
+  opts.on("-i", "Dump the results into @response in IRB") do
+    options['irb'] = true
+  end
+  
+  opts.on_tail("-h", "Show this message") do
+    puts opts
+    exit
+  end
+end.parse!
+
+process_url ARGV.shift, options
