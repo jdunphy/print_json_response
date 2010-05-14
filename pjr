@@ -34,7 +34,7 @@ def process_url(url, options)
     puts "JSON response is in @response"
     IRB.start
   else
-    puts JSON.pretty_unparse(data)    
+    puts JSON.pretty_unparse(data)
   end
 end
 
@@ -46,7 +46,7 @@ OptionParser.new do |opts|
   opts.on("-i", "Dump the results into @response in IRB") do
     options['irb'] = true
   end
-  
+
   opts.on_tail("-h", "Show this message") do
     puts opts
     exit
