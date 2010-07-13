@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+
+require 'print_json_response'
+
+PrintJsonResponse.run
+
