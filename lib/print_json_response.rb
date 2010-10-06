@@ -6,7 +6,7 @@ require 'json'
 
 class PrintJsonResponse
 
-  VERSION = '1.0'
+  VERSION = '1.0.1'
 
   DEFAULT_HOST = 'http://127.0.0.1:3000'
 
