@@ -4,6 +4,26 @@ require 'uri'
 
 require 'json'
 
+require 'pp'
+module PP::PPMethods
+
+  def pp_hash obj
+    group(1, '{', '}') {
+      keys = obj.keys.sort
+      seplist(keys, nil, :each) {|k|
+        group {
+          pp k
+          text '=>'
+          group(1) {
+            breakable ''
+            pp obj[k]
+          }
+        }
+      }
+    }
+  end
+end
+
 class PrintJsonResponse
 
   VERSION = '2.0'
@@ -93,7 +113,6 @@ document like:
   end
 
   def diff results
-    require 'pp'
     require 'tempfile'
     require 'enumerator'
 
