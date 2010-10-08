@@ -2,5 +2,6 @@ History.txt
 Manifest.txt
 README.txt
 Rakefile
+bin/djr
 bin/pjr
 lib/print_json_response.rb
