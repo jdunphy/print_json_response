@@ -1,3 +1,8 @@
+=== 2.0
+
+* Major enhancement:
+  * Added djr "diff json response", diff the output of two json results
+
 === 1.0 / ??
 
 * Major Enhancement

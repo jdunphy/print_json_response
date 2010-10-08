@@ -6,20 +6,28 @@ require 'json'
 
 class PrintJsonResponse
 
-  VERSION = '1.0.1'
+  VERSION = '2.0'
 
   DEFAULT_HOST = 'http://127.0.0.1:3000'
 
   CONFIG_PATH = File.expand_path '~/.pjr'
 
-  def self.process_args argv
+  def self.process_args program_name, argv
     options = {}
+    options[:diff_opts] = '-u'
+
+    djr = program_name =~ /djr$/
 
     op = OptionParser.new do |opts|
-      opts.program_name = 'pjr'
+      opts.program_name = program_name
       opts.version = VERSION
-      opts.banner = <<-BANNER
-Usage: pjr [options] URL [PATH ...]
+      opts.banner = if djr then
+                      "Usage: #{program_name} [options] URL URL [PATH ...]"
+                    else
+                      "Usage: #{program_name} [options] URL [PATH ...]"
+                    end
+
+      opts.banner << <<-BANNER
 
 PATH is a path of keys in the JSON document you wish to descend.  Given a JSON
 document like:
@@ -30,6 +38,10 @@ document like:
 
       BANNER
 
+      opts.on '--diff-opts=DIFF_OPTS', 'Options for diff' do |value|
+        options[:diff_opts] = value
+      end if djr
+
       opts.on '--[no-]irb', 'Dump the results into @response in IRB' do |value|
         options[:irb] = value
       end
@@ -39,31 +51,34 @@ document like:
 
     abort op.to_s if argv.empty?
 
-    url = argv.shift
+    urls = argv.shift(djr ? 2 : 1)
 
     options[:path] = argv
 
-    return url, options
+    return urls, options
   end
 
-  def self.run argv = ARGV
-    url, options = process_args argv
+  def self.run program_name, argv = ARGV
+    urls, options = process_args program_name, argv
 
-    pjr = new url, options
+    pjr = new urls, options
 
     pjr.run
   end
 
-  def initialize url, options
-    unless url =~ /\Ahttp/i then
-      url = '/' + url unless url.start_with? '/'
-      url = default_host + url
+  def initialize urls, options
+    @urls = urls.map do |url|
+      unless url =~ /\Ahttp/i then
+        url = '/' + url unless url.start_with? '/'
+        url = default_host + url
+      end
+
+      URI.parse url
     end
 
-    @url = URI.parse url
-
-    @irb  = options[:irb]
-    @path = options[:path]
+    @diff_opts = options[:diff_opts]
+    @irb       = options[:irb]
+    @path      = options[:path]
   end
 
   def default_host
@@ -75,23 +90,52 @@ document like:
     end
   end
 
-  def run
-    $stderr.puts "Retrieving #{@url}:" if $stdout.tty?
+  def diff results
+    require 'pp'
+    require 'tempfile'
+    require 'enumerator'
 
-    resp = Net::HTTP.get_response @url
+    tempfiles = []
+
+    results.each_with_index do |result, i|
+      io = Tempfile.open "url_#{i}_"
+      io.puts result.pretty_inspect
+      io.flush
+
+      tempfiles << io
+    end
+
+    system "diff #{@diff_opts} #{tempfiles.map { |io| io.path}.join ' '}"
+  end
+
+  def irb json
+    require 'irb'
+    @response = json
+    puts "JSON response is in @response"
+    IRB.start
+  end
+
+  def fetch url
+    $stderr.puts "Retrieving #{url}:" if $stdout.tty?
+
+    resp = Net::HTTP.get_response url
     json = JSON.parse resp.body
 
     json = @path.inject json do |data, item| data[item] end
+  end
 
-    if @irb then
-      require 'irb'
-      @response = json
-      puts "Loading IRB."
-      puts "JSON response is in @response"
-      IRB.start
+  def run
+    results = @urls.map do |url|
+      fetch url
+    end
+
+    if results.length == 2 then
+      diff results
+    elsif @irb then
+      irb results.first
     else
       require 'pp'
-      puts json.pretty_inspect
+      puts results.first.pretty_inspect
     end
   end
 

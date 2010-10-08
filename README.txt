@@ -5,6 +5,7 @@
 == DESCRIPTION
 
 A simple script to grab JSON from a URI and view it in a readable manner.
+Also, diff the JSON result of two URIs.
 
 == SYNOPSIS:
 
@@ -35,6 +36,15 @@ pjr can jump into irb, instead of printing json
   JSON response is in @response
   irb(main):001:0> @response['what']
   => "oh hey look some pretty-printed json"
+
+djr can diff two JSON results:
+
+  $ djr http://one.example/some/path http://two.example/some/path
+
+pjr and djr can walk the JSON tree for more specific results:
+
+  $ pjr http://one.example/some/path a b c
+  $ djr http://one.example/some/path http://two.example/some/path a b c
 
 == INSTALL:
 
