@@ -33,8 +33,8 @@ pjr can jump into irb, instead of printing json
   $ pjr -i someurl.json
   Retrieving http://127.0.0.1:3000/someurl.json:
   Loading IRB.
-  JSON response is in @response
-  irb(main):001:0> @response['what']
+  JSON response is in $response
+  irb(main):001:0> $response['what']
   => "oh hey look some pretty-printed json"
 
 djr can diff two JSON results:

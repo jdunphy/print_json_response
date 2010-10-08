@@ -4,6 +4,26 @@ require 'uri'
 
 require 'json'
 
+require 'pp'
+module PP::PPMethods
+
+  def pp_hash obj
+    group(1, '{', '}') {
+      keys = obj.keys.sort
+      seplist(keys, nil, :each) {|k|
+        group {
+          pp k
+          text '=>'
+          group(1) {
+            breakable ''
+            pp obj[k]
+          }
+        }
+      }
+    }
+  end
+end
+
 class PrintJsonResponse
 
   VERSION = '2.0'
@@ -42,7 +62,7 @@ document like:
         options[:diff_opts] = value
       end if djr
 
-      opts.on '--[no-]irb', 'Dump the results into @response in IRB' do |value|
+      opts.on '--[no-]irb', 'Dump the results into $response in IRB' do |value|
         options[:irb] = value
       end
     end
@@ -53,7 +73,9 @@ document like:
 
     urls = argv.shift(djr ? 2 : 1)
 
-    options[:path] = argv
+    options[:path] = argv.dup
+
+    argv.clear
 
     return urls, options
   end
@@ -91,7 +113,6 @@ document like:
   end
 
   def diff results
-    require 'pp'
     require 'tempfile'
     require 'enumerator'
 
@@ -119,8 +140,8 @@ document like:
 
   def irb json
     require 'irb'
-    @response = json
-    puts "JSON response is in @response"
+    $response = json
+    puts "JSON response is in $response"
     IRB.start
   end
 
