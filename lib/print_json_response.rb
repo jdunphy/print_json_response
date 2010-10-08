@@ -108,13 +108,6 @@ document like:
     system "diff #{@diff_opts} #{tempfiles.map { |io| io.path}.join ' '}"
   end
 
-  def irb json
-    require 'irb'
-    @response = json
-    puts "JSON response is in @response"
-    IRB.start
-  end
-
   def fetch url
     $stderr.puts "Retrieving #{url}:" if $stdout.tty?
 
@@ -122,6 +115,13 @@ document like:
     json = JSON.parse resp.body
 
     json = @path.inject json do |data, item| data[item] end
+  end
+
+  def irb json
+    require 'irb'
+    @response = json
+    puts "JSON response is in @response"
+    IRB.start
   end
 
   def run
