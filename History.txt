@@ -2,8 +2,10 @@
 
 * Major enhancement:
   * Added djr "diff json response", diff the output of two json results
+* Bug fixes:
+  * irb mode works with $response now
 
-=== 1.0 / ??
+=== 1.0
 
 * Major Enhancement
   * Birthday!

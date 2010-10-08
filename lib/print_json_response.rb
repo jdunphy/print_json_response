@@ -42,7 +42,7 @@ document like:
         options[:diff_opts] = value
       end if djr
 
-      opts.on '--[no-]irb', 'Dump the results into @response in IRB' do |value|
+      opts.on '--[no-]irb', 'Dump the results into $response in IRB' do |value|
         options[:irb] = value
       end
     end
@@ -53,7 +53,9 @@ document like:
 
     urls = argv.shift(djr ? 2 : 1)
 
-    options[:path] = argv
+    options[:path] = argv.dup
+
+    argv.clear
 
     return urls, options
   end
@@ -119,8 +121,8 @@ document like:
 
   def irb json
     require 'irb'
-    @response = json
-    puts "JSON response is in @response"
+    $response = json
+    puts "JSON response is in $response"
     IRB.start
   end
 
