@@ -1,9 +1,11 @@
+=== 2.0.1
+* Bug fixes:
+  * irb mode works with $response now
+
 === 2.0
 
 * Major enhancement:
   * Added djr "diff json response", diff the output of two json results
-* Bug fixes:
-  * irb mode works with $response now
 
 === 1.0
 

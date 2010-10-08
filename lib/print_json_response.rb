@@ -26,7 +26,7 @@ end
 
 class PrintJsonResponse
 
-  VERSION = '2.0'
+  VERSION = '2.0.1'
 
   DEFAULT_HOST = 'http://127.0.0.1:3000'
 
